@@ -1,6 +1,6 @@
 package Modelos;
 
-import APIs.Item;
+import APIs.googlebooks.Item;
 
 import java.util.List;
 

@@ -1,6 +1,4 @@
-package APIs;
-
-import Modelos.VolumeInfo;
+package APIs.googlebooks;
 
 public class Item {
     private VolumeInfo volumeInfo;

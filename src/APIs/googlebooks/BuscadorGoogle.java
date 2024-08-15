@@ -1,7 +1,6 @@
-package APIs;
+package APIs.googlebooks;
 
 import Modelos.LivroGoogle;
-import Modelos.VolumeInfo;
 import com.google.gson.Gson;
 
 import java.io.IOException;

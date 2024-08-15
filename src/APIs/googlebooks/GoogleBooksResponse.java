@@ -1,4 +1,4 @@
-package APIs;
+package APIs.googlebooks;
 
 public class GoogleBooksResponse {
     private Volume[] items;

@@ -2,7 +2,7 @@ package Main;
 
 import java.io.IOException;
 import java.util.Scanner;
-import APIs.BuscadorGoogle;
+import APIs.googlebooks.BuscadorGoogle;
 import Modelos.Usuario;
 
 import static Modelos.Usuario.carregarUsuarios;
