@@ -1,7 +1,9 @@
 package APIs;
 
 import Modelos.LivroGoogle;
+import Modelos.VolumeInfo;
 import com.google.gson.Gson;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -9,9 +11,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Scanner;
 
-public class GoogleLibrary {
+public class BuscadorGoogle {
 
-    private static final String API_KEY = "AIzaSyA7F4nBEfPWBXb-Qj07qLp8vQX0tqbvYGk"; // Substitua pela sua chave de API
+    private static final String API_KEY = "AIzaSyA7F4nBEfPWBXb-Qj07qLp8vQX0tqbvYGk";
 
     public void buscaLivro() throws IOException, InterruptedException {
         Scanner sc = new Scanner(System.in);
@@ -21,56 +23,27 @@ public class GoogleLibrary {
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.googleapis.com/books/v1/volumes?q=" + livro + "&key=" + API_KEY))
+                .uri(URI.create("https://www.googleapis.com/books/v1/volumes?q=" + livro + "&key=" + API_KEY + "&fields=items(volumeInfo(title,authors,publishedDate))&maxResults=1"))
                 .build();
 
         HttpResponse<String> resposta = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         String json = resposta.body();
-        System.out.println(json); // Exibe a resposta JSON para referência
+        System.out.println(json);
 
         Gson gson = new Gson();
-        GoogleBooksResponse response = gson.fromJson(json, GoogleBooksResponse.class);
+        LivroGoogle livroGoogle = gson.fromJson(json, LivroGoogle.class);
 
-        if (response.getItems() != null && response.getItems().length > 0) {
-            LivroGoogle livroEncontrado = response.getItems()[0].getVolumeInfo();
-            System.out.println("Nome do Livro: " + livroEncontrado.getTitle());
-            System.out.println("Autor: " + livroEncontrado.getAutor());
+        if(livroGoogle.getItems() != null && !livroGoogle.getItems().isEmpty()){
+            Item item = livroGoogle.getItems().get(0);
+            VolumeInfo volumeInfo = item.getVolumeInfo();
+
+            System.out.println("Título: " + volumeInfo.getTitle());
+            System.out.println("Autores: " + volumeInfo.getAuthors());
+            System.out.println("Data de Publicação: " + volumeInfo.getPublishedDate());
         } else {
             System.out.println("Nenhum livro encontrado.");
         }
-    }
 
-    private static class GoogleBooksResponse {
-        private LivroGoogle[] items;
-
-        public LivroGoogle[] getItems() {
-            return items;
-        }
-
-        public void setItems(LivroGoogle[] items) {
-            this.items = items;
-        }
-    }
-
-    private static class VolumeInfo {
-        private String title;
-        private String[] authors;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(String title) {
-            this.title = title;
-        }
-
-        public String[] getAuthors() {
-            return authors;
-        }
-
-        public void setAuthors(String[] authors) {
-            this.authors = authors;
-        }
     }
 }
