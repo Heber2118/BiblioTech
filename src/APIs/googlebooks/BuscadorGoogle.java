@@ -1,6 +1,7 @@
 package APIs.googlebooks;
 
 import Modelos.LivroGoogle;
+import Modelos.auxiliares.ProcessaBusca;
 import com.google.gson.Gson;
 
 import java.io.IOException;
@@ -8,6 +9,8 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Collections;
+import java.util.List;
 import java.util.Scanner;
 
 public class BuscadorGoogle {
@@ -18,17 +21,17 @@ public class BuscadorGoogle {
         Scanner sc = new Scanner(System.in);
         System.out.println("Digite o livro que deseja buscar: ");
         String livro = sc.nextLine();
+        String livronospace = livro.replace(" ","+");
 
         HttpClient client = HttpClient.newHttpClient();
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("https://www.googleapis.com/books/v1/volumes?q=" + livro + "&key=" + API_KEY + "&fields=items(volumeInfo(title,authors,publishedDate))&maxResults=1"))
+                .uri(URI.create("https://www.googleapis.com/books/v1/volumes?q=" + livronospace + "&key=" + API_KEY + "&fields=items(volumeInfo(title,authors,publishedDate))&maxResults=1"))
                 .build();
 
         HttpResponse<String> resposta = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         String json = resposta.body();
-        System.out.println(json);
 
         Gson gson = new Gson();
         LivroGoogle livroGoogle = gson.fromJson(json, LivroGoogle.class);
@@ -40,6 +43,17 @@ public class BuscadorGoogle {
             System.out.println("Título: " + volumeInfo.getTitle());
             System.out.println("Autores: " + volumeInfo.getAuthors());
             System.out.println("Data de Publicação: " + volumeInfo.getPublishedDate());
+            String resposta_titulo = volumeInfo.getTitle();
+            List resposta_autor = volumeInfo.getAuthors();
+            String resposta_data = volumeInfo.getPublishedDate();
+
+            ProcessaBusca processaBusca = new ProcessaBusca();
+
+            resposta_titulo = processaBusca.getResposta_titulo();
+            resposta_autor = Collections.singletonList(processaBusca.getResposta_autor());
+            resposta_data = processaBusca.getResposta_data();
+
+
         } else {
             System.out.println("Nenhum livro encontrado.");
         }
